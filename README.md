@@ -7,6 +7,8 @@ This script will check against the existing inventory and return the status onli
 If you want to check against a specific inventory only, change the ansible query all for the specific tag in your ansible hosts file 
 ```(see /etc/ansible/hosts)```
 
+![Lab Status Screenshot](lab-status-screenshot.png)
+
 
 ## Recommended install
 
