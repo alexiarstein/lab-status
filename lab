@@ -1,0 +1,57 @@
+#!/bin/bash
+# Lab Status Check, Requires Ansible
+# Author: Alexia Michelle Steinberg <alexia@goldendoglinux.org>
+# https://github.com/alexiarstein
+
+# Colors
+GREEN=$(tput setaf 2)
+RED=$(tput setaf 1)
+RESET=$(tput init)
+version=(1.0.0)
+# Por defecto, Ansible va a consultar contra todo el inventario
+# reemplazar 'all' por el inventario específico que se desea verificar
+
+function version() {
+echo "Lab status $version"
+}
+
+function status() {
+echo "Lab Status"
+ansible all --list-hosts | grep -v "hosts" | while read -r host; do
+    if ansible "$host" -m ping -o 2>/dev/null | grep -q "SUCCESS"; then
+        printf "%s\t%s%s%s\n" "$host" "$GREEN" "online" "$RESET"
+    else
+        printf "%s\t%s%s%s\n" "$host" "$RED" "offline" "$RESET"
+    fi
+done | column -t 
+}
+
+# Define a function to print the usage/help message
+print_usage() {
+    cat <<EOF
+Usage: $(basename "$0") [option]
+Options:
+  -s, status      Run lab status
+  -v, version     Print version info
+EOF
+}
+
+# Main logic: if no arguments are given, print the help message
+if [ $# -eq 0 ]; then
+    print_usage
+    exit 1
+fi
+
+# Process the first argument
+case "$1" in
+    -s|status)
+        status
+        ;;
+    -v|version)
+        version
+        ;;
+    *)
+        print_usage
+        exit 1
+        ;;
+esac
